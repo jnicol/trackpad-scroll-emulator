@@ -1,12 +1,12 @@
 /**
  * TrackpadScrollEmulator
- * Version: 1.0.3
+ * Version: 1.0.6
  * Author: Jonathan Nicol @f6design
  * https://github.com/jnicol/trackpad-scroll-emulator
  *
  * The MIT License
  *
- * Copyright (c) 2012-2013 Jonathan Nicol
+ * Copyright (c) 2012-2014 Jonathan Nicol
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,7 @@
     var $dragHandleEl;
     var dragOffset;
     var flashTimeout;
+    var pageJumpMultp = 7/8;
     var scrollDirection = 'vert';
     var scrollOffsetAttr = 'scrollTop';
     var sizeAttr = 'height';
@@ -67,14 +68,19 @@
 
       resizeScrollContent();
 
-      if (options.autoHide) { 
+      if (options.autoHide) {
         $el.on('mouseenter', flashScrollbar);
       }
-      
+
       $dragHandleEl.on('mousedown', startDrag);
+      $scrollbarEl.on('mousedown', jumpScroll);
       $scrollContentEl.on('scroll', onScrolled);
 
       resizeScrollbar();
+
+      $(window).on('resize', function() {
+        recalculate();
+      });
 
       if (!options.autoHide) {
         showScrollbar();
@@ -126,6 +132,30 @@
     function endDrag() {
       $(document).off('mousemove', drag);
       $(document).off('mouseup', endDrag);
+    }
+
+    /**
+     * Scroll in the same manner as the PAGE UP/DOWN keys
+     */
+    function jumpScroll(e) {
+      // If the drag handle element was pressed, don't do anything here.
+      if (e.target === $dragHandleEl[0]) {
+        return;
+      }
+
+      // The content will scroll by 7/8 of a page.
+      var jumpAmt = pageJumpMultp * $scrollContentEl[sizeAttr]();
+
+      // Calculate where along the scrollbar the user clicked.
+      var eventOffset = (scrollDirection === 'vert') ? e.originalEvent.layerY : e.originalEvent.layerX;
+
+      // Get the position of the top (or left) of the drag handle.
+      var dragHandleOffset = $dragHandleEl.position()[offsetAttr];
+
+      // Determine which direction to scroll.
+      var scrollPos = (eventOffset < dragHandleOffset) ? $scrollContentEl[scrollOffsetAttr]() - jumpAmt : $scrollContentEl[scrollOffsetAttr]() + jumpAmt;
+
+      $scrollContentEl[scrollOffsetAttr](scrollPos);
     }
 
     /**
@@ -225,6 +255,13 @@
       var width = $(tempEl).innerWidth();
       var widthMinusScrollbars = $('div', tempEl).innerWidth();
       tempEl.remove();
+      // On OS X if the scrollbar is set to auto hide it will have zero width. On webkit we can still
+      // hide it using ::-webkit-scrollbar { width:0; height:0; } but there is no moz equivalent. So we're
+      // forced to sniff Firefox and return a hard-coded scrollbar width. I know, I know...
+      if (width === widthMinusScrollbars && navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        return 17;
+      }
+      console.log(width - widthMinusScrollbars);
       return (width - widthMinusScrollbars);
     }
 
