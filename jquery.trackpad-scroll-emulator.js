@@ -95,11 +95,19 @@
       if (scrollDirection === 'horiz') {
         eventOffset = e.pageX;
       }
+      
+      var contentSize = sizeAttr === 'height' ? $contentEl.outerHeight() : $contentEl.outerWidth();
+      var scrollbarSize = $scrollbarEl[sizeAttr]();
+      var handleSize = $dragHandleEl[sizeAttr]();
       var dragPos = eventOffset - $scrollbarEl.offset()[offsetAttr] - dragOffset;
+      dragPos += dragPos / (scrollbarSize - handleSize) * handleSize;
+      
       // Convert the mouse position into a percentage of the scrollbar height/width.
-      var dragPerc = dragPos / $scrollbarEl[sizeAttr]();
+      var dragPerc = dragPos / scrollbarSize;
+      dragPerc = (contentSize * dragPerc - (scrollbarSize * dragPerc)) / contentSize;
+
       // Scroll the content by the same percentage.
-      var scrollPos = dragPerc * $contentEl[sizeAttr]();
+      var scrollPos = dragPerc * contentSize;
 
       $scrollContentEl[scrollOffsetAttr](scrollPos);
     }
@@ -156,6 +164,11 @@
       // Offset of 2px allows for a small top/bottom or left/right margin around handle.
       var handleOffset = Math.round(scrollbarRatio * scrollOffset) + 2;
       var handleSize = Math.floor(scrollbarRatio * (scrollbarSize - 2)) - 2;
+
+      if (options.handleSize) {
+        handleOffset += handleOffset / (scrollbarSize - handleSize) * (handleSize - options.handleSize);
+        handleSize    = options.handleSize;
+      }
 
       if (scrollbarSize < contentSize) {
         if (scrollDirection === 'vert'){
@@ -323,7 +336,8 @@
     onInit: function() {},
     onDestroy: function() {},
     wrapContent: true,
-    autoHide: true
+    autoHide: true,
+    handleSize: undefined
   };
 
 })(jQuery);
