@@ -56,9 +56,7 @@
 
       resizeScrollbar();
 
-      $(window).on('resize', function() {
-        recalculate();
-      });
+      $(window).on('resize.trackpadScollEmulator', recalculate);
 
       if (!options.autoHide) {
         showScrollbar();
@@ -165,7 +163,7 @@
         }
         $scrollbarEl.show();
       } else {
-         $scrollbarEl.hide();
+        $scrollbarEl.hide();
       }
     }
 
@@ -181,27 +179,27 @@
      * Show scrollbar
      */
     function showScrollbar() {
-        $dragHandleEl.addClass('visible');
+      $dragHandleEl.addClass('visible');
 
-        if (!options.autoHide) {
-          return;
-        }
-        if(typeof flashTimeout === 'number') {
-          window.clearTimeout(flashTimeout);
-        }
-        flashTimeout = window.setTimeout(function() {
-            hideScrollbar();
-        }, 1000);
+      if (!options.autoHide) {
+        return;
+      }
+      if(typeof flashTimeout === 'number') {
+        window.clearTimeout(flashTimeout);
+      }
+      flashTimeout = window.setTimeout(function() {
+        hideScrollbar();
+      }, 1000);
     }
 
     /**
      * Hide Scrollbar
      */
     function hideScrollbar() {
-        $dragHandleEl.removeClass('visible');
-        if(typeof flashTimeout === 'number') {
-          window.clearTimeout(flashTimeout);
-        }
+      $dragHandleEl.removeClass('visible');
+      if(typeof flashTimeout === 'number') {
+        window.clearTimeout(flashTimeout);
+      }
     }
 
     /**
@@ -270,6 +268,8 @@
       $scrollbarEl.remove();
       $scrollContentEl.remove();
       $contentEl.css({'height': $el.height()+'px', 'overflow-y': 'scroll'});
+
+      $(window).off('resize.trackpadScollEmulator');
 
       hook('onDestroy');
       $el.removeData('plugin_' + pluginName);
