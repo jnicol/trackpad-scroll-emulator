@@ -97,8 +97,16 @@
   <script>
   $(document).ready(function() {
     // Initialize scrollers.
-    $('.demo1').TrackpadScrollEmulator();
-    $('.demo2').TrackpadScrollEmulator();
+    $('.demo1').TrackpadScrollEmulator({
+      onScrollEnd: function() {
+        alert('at the end');
+      }
+    });
+    $('.demo2').TrackpadScrollEmulator({
+      onScrollEnd: function() {
+        alert('at the end');
+      }
+    });
     // Demonstration of changing the vertical scroller content and dimensions.
     $('.add-more').on('click', function(e){
       e.preventDefault();
