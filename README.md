@@ -1,3 +1,7 @@
+**IMPORTANT** This repository is no longer maintained. We recommend using SimpleBar(https://github.com/Grsmto/simplebar) which is an actively maintained fork of trackpad-scroll-emulator.
+
+<hr>
+
 #Trackpad Scroll Emulator
 
 A jQuery plugin that emulates OS X trackpad-style scrollbars in any browser or platform. Based on the scrollbars in the Rdio app.
