@@ -45,10 +45,10 @@ Mark up the content you wish to scroll like so:
       </div>
     </div>
 
-For horizontal scrolling add the class `horizontal` to the `tse-content` element:
+For horizontal scrolling add the class `horizontal` to the `tse-scrollable` element:
 
-    <div class="tse-scrollable wrapper">
-      <div class="tse-content horizontal">
+    <div class="tse-scrollable horizontal wrapper">
+      <div class="tse-content">
         My content
       </div>
     </div>
