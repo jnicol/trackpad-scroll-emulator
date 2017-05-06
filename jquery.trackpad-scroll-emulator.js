@@ -276,6 +276,36 @@
     }
 
     /**
+     * Scroll API method. Enables user to scroll the content to specified position.
+     * @param  {Mixed} position
+     *      If a string is passed, possible options are: "top", "right", "bottom", "left".
+     *      If a number is passed, the content is scrolled to specified position (in pixels).
+     *      If undefined, the content is scrolled to beginning.
+     */
+    function scroll (position) {
+      if (typeof position === 'undefined') {
+        position = 'top';
+      } else if (typeof position === 'string') {
+        position = (position || 'top').toLowerCase();
+      }
+
+      switch (position) {
+        case 'top': // Falls through
+        case 'left':
+          position = 0;
+          break;
+        case 'right':
+          position = $contentEl.width();
+          break;
+        case 'bottom':
+          position = $contentEl.height();
+          break;
+      }
+
+      $scrollContentEl[scrollOffsetAttr](position);
+    }
+
+    /**
      * Plugin callback hook.
      */
     function hook(hookName) {
@@ -289,7 +319,8 @@
     return {
       option: option,
       destroy: destroy,
-      recalculate: recalculate
+      recalculate: recalculate,
+      scroll: scroll
     };
   }
 
