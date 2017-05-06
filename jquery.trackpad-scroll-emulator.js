@@ -139,6 +139,18 @@
      */
     function onScrolled(e) {
       flashScrollbar();
+      checkScrollEnd();
+    }
+
+    function checkScrollEnd() {
+      var contentSize = sizeAttr === 'height' ? $contentEl.outerHeight() : $contentEl.outerWidth();
+      var scrollOffset = $scrollContentEl[scrollOffsetAttr](); // Either scrollTop() or scrollLeft().
+      var scrollbarSize = $scrollbarEl[sizeAttr]();
+      
+      var endReached = scrollOffset + scrollbarSize + options.scrollBuffer >= contentSize;
+      if (endReached) {
+        hook('onScrollEnd');
+      }
     }
 
     /**
@@ -322,6 +334,8 @@
   $.fn[pluginName].defaults = {
     onInit: function() {},
     onDestroy: function() {},
+    onScrollEnd: function() {},
+    scrollBuffer: 50,
     wrapContent: true,
     autoHide: true
   };
